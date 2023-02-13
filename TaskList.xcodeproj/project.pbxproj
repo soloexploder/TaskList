@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8B248F02284E4C7500CD9518 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B248F01284E4C7500CD9518 /* StorageManager.swift */; };
+		8B248F04284E5E2200CD9518 /* AlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B248F03284E5E2200CD9518 /* AlertController.swift */; };
 		8BCF30C8282185DD00EB4275 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BCF30C7282185DD00EB4275 /* AppDelegate.swift */; };
 		8BCF30CC282185DD00EB4275 /* TaskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BCF30CB282185DD00EB4275 /* TaskListViewController.swift */; };
 		8BCF30D2282185DD00EB4275 /* TaskList.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8BCF30D0282185DD00EB4275 /* TaskList.xcdatamodeld */; };
@@ -15,6 +17,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8B248F01284E4C7500CD9518 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
+		8B248F03284E5E2200CD9518 /* AlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertController.swift; sourceTree = "<group>"; };
 		8BCF30C4282185DD00EB4275 /* TaskList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TaskList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8BCF30C7282185DD00EB4275 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8BCF30CB282185DD00EB4275 /* TaskListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListViewController.swift; sourceTree = "<group>"; };
@@ -60,6 +64,8 @@
 				8BCF30D5282185DE00EB4275 /* LaunchScreen.storyboard */,
 				8BCF30D8282185DE00EB4275 /* Info.plist */,
 				8BCF30D0282185DD00EB4275 /* TaskList.xcdatamodeld */,
+				8B248F01284E4C7500CD9518 /* StorageManager.swift */,
+				8B248F03284E5E2200CD9518 /* AlertController.swift */,
 			);
 			path = TaskList;
 			sourceTree = "<group>";
@@ -135,8 +141,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				8BCF30D2282185DD00EB4275 /* TaskList.xcdatamodeld in Sources */,
+				8B248F04284E5E2200CD9518 /* AlertController.swift in Sources */,
 				8BCF30CC282185DD00EB4275 /* TaskListViewController.swift in Sources */,
 				8BCF30C8282185DD00EB4275 /* AppDelegate.swift in Sources */,
+				8B248F02284E4C7500CD9518 /* StorageManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

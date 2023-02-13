@@ -6,24 +6,21 @@
 //
 
 import UIKit
-import CoreData
-
-protocol TaskViewControlerDelegate {
-    func reloadData()
-}
 
 class TaskListViewController: UITableViewController {
     
-    private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     private let cellID = "cell"
-    private var taskList: [Task] = []
+    private var taskList: [Task] = [] 
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        tableView.delegate = self
+        tableView.dataSource = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellID)
         setupNavigationBar()
-        fetchData()
+        getData()
+        
     }
     
     private func setupNavigationBar() {
@@ -55,48 +52,24 @@ class TaskListViewController: UITableViewController {
     }
     
     @objc private func addNewTask() {
-        showAlert(with: "New Task", and: "What do want to do?")
+        showAlert()
     }
     
-    private func fetchData() {
-        let fetchRequest: NSFetchRequest<Task> = Task.fetchRequest()
-        
-        do {
-            taskList = try context.fetch(fetchRequest)
-        } catch {
-            print(error.localizedDescription)
+    private func save(task: String) {
+        StorageManager.shared.save(task) { task in
+            self.taskList.append(task)
+            self.tableView.insertRows(
+                at: [IndexPath(row: self.taskList.count - 1, section: 0)],
+                with: .automatic)
         }
     }
     
-    private func showAlert(with title: String, and message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let saveAction = UIAlertAction(title: "Save", style: .default) { _ in
-            guard let task = alert.textFields?.first?.text, !task.isEmpty else {return}
-            self.save(task)
-        }
-        let cancelAction = UIAlertAction(title: "Cancel", style: .destructive)
-        alert.addAction(saveAction)
-        alert.addAction(cancelAction)
-        alert.addTextField { textField in
-            textField.placeholder = "New task"
-        }
-        
-        present(alert, animated: true)
-    }
-    
-    private func save(_ taskName: String) {
-        guard let entityDescription = NSEntityDescription.entity(forEntityName: "Task", in: context) else {return}
-        guard let task = NSManagedObject(entity: entityDescription, insertInto: context) as? Task else {return}
-        task.title = taskName
-        taskList.append(task)
-        
-        let cellIndex = IndexPath(row: taskList.count - 1, section: 0)
-        tableView.insertRows(at: [cellIndex], with: .automatic)
-        
-        if context.hasChanges {
-            do {
-                try context.save()
-            } catch {
+    private func getData() {
+        StorageManager.shared.fetchData { result in
+            switch result {
+            case .success(let tasks):
+                self.taskList = tasks
+            case .failure(let error):
                 print(error.localizedDescription)
             }
         }
@@ -114,17 +87,59 @@ extension TaskListViewController {
         let task = taskList[indexPath.row]
         var content = cell.defaultContentConfiguration()
         content.text = task.title
+        content.textProperties.color = .gray
         cell.contentConfiguration = content
         
         return cell
     }
 }
 
-// MARK: - TaskViewControlerDelegate
-extension TaskListViewController: TaskViewControlerDelegate {
-    func reloadData() {
-        fetchData()
-        tableView.reloadData()
+// MARK: - UITableViewDelegate
+extension TaskListViewController {
+    
+    //Edit Task
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let task = taskList[indexPath.row]
+        showAlert(task: task) {
+            tableView.reloadRows(at: [indexPath], with: .automatic)
+        }
+    }
+    
+    //Delete task
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        let task = taskList[indexPath.row]
+        
+        if editingStyle == .delete {
+            taskList.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+            StorageManager.shared.delete(task)
+        }
+    }
+   
+}
+
+//MARK: - Alert Controller
+extension TaskListViewController {
+    
+    private func showAlert(task: Task? = nil, and completion: (() -> Void)? = nil) {
+        let title = task != nil ? "Update new task" : "New task"
+        
+        let alert = AlertController(title: title,
+                                      message: "What do want to do",
+                                      preferredStyle: .alert)
+        
+        alert.action(task: task) { taskName in
+            if let task = task, let completion = completion {
+                StorageManager.shared.edit(task, newName: taskName)
+                completion()
+            } else {
+                self.save(task: taskName)
+            }
+            
+        }
+        
+        present(alert, animated: true)
     }
 }
 
